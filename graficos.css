@@ -32,10 +32,13 @@ header {
 }
 
 .logo img {
-    height: 50px;
+    max-height: 50px;   /* altura máxima igual à altura do header */
+    max-width: 120px;   /* largura máxima para evitar exageros */
+    width: auto;        /* mantém proporção */
+    height: auto;       /* mantém proporção */
     border-radius: 10px;
-    object-fit: contain; /* garante que a imagem mantenha proporção e não distorça */
-    max-width: 150px; /* evita que a imagem fique muito grande e desconfigure o header */
+    object-fit: contain;
+    display: block;
 }
 
 .titulo {
