@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mondax + Educação</title>
+  <link rel="stylesheet" href="graficos.css">
+  <link rel="stylesheet" href="/style-global.css">
+  <script src="https://kit.fontawesome.com/b7869dd3bf.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .tabela-beneficiarios {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .tabela-beneficiarios thead {
+      background-color: #2d6cdf;
+      color: white;
+    }
+
+    .tabela-beneficiarios th,
+    .tabela-beneficiarios td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tabela-beneficiarios tr:hover {
+      background-color: #f0f8ff;
+    }
+
+    .usuario-logado {
+      color: #333;
+      font-weight: bold;
+      margin-right: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 600px) {
+      .tabela-beneficiarios, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      .tabela-beneficiarios thead {
+        display: none;
+      }
+
+      .tabela-beneficiarios tr {
+        background: #eef3fc;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        padding: 10px;
+      }
+
+      .tabela-beneficiarios td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      .tabela-beneficiarios td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        font-weight: bold;
+        text-align: left;
+      }
+    }
+  </style>
+  <script>
+    function abrirWhatsApp() {
+      window.open("https://api.whatsapp.com/send?1=pt_BR&phone=555332623030", "_blank");
+    }
+
+    function sair() {
+      localStorage.removeItem("usuarioLogado");
+      window.location.href = "index.html"; 
+    }
+
+    window.onload = function () {
+      const nomeUsuario = localStorage.getItem("usuarioLogado") || "Usuário";
+      document.getElementById("usuarioNome").textContent = nomeUsuario;
+
+      var ctx = document.getElementById("grafico").getContext("2d");
+      var grafico = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ["Alunos Castrados", "Vieram De Outros Provedores"],
+          datasets: [{
+            label: "Alunos",
+            data: [200, 150],
+            backgroundColor: ['#7ed957', '#f39c12'],
+            borderColor: ['#6bd545', '#e67e22'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    };
+  </script>
+</head>
+<body>
+  <div class="pagina">
+    <header>
+      <div class="logo">
+        <img src="/Imagens/Logo.png" alt="Logo do Projeto">
+      </div>
+      <div class="titulo">Mondax + Educação</div>
+      <div style="display: flex; align-items: center;">
+        <div class="usuario-logado" id="usuarioNome">Usuário</div>
+        <button class="botao-sair" onclick="sair()">Sair</button>
+      </div>
+    </header>
+
+    <div class="conteudo">
+      <div class="bloco grafico" style="grid-column: span 3;">
+        <canvas id="grafico"></canvas>
+      </div>
+      
+      <div class="bloco">
+        <div>
+          <h4>Ranking de Alunos 👨‍🎓</h4>
+          <ul>
+            <li>1º Lucas Silva - 10 benefícios</li>
+            <li>2º Ana Oliveira - 8 benefícios</li>
+            <li>3º Felipe Souza - 6 benefícios</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Ranking de Escolas 🏤</h4>
+          <ul>
+            <li>1º Escola ABC - 150 alunos cadastrados</li>
+            <li>2º Escola XYZ - 120 alunos cadastrados</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="bloco">
+        <h2>Pais Cadastrados 👨‍👦‍👦</h2>
+        <ul>
+          <li>João Silva - Filho: Lucas Silva</li>
+          <li>Maria Oliveira - Filha: Ana Oliveira</li>
+          <li>Roberto Souza - Filho: Felipe Souza</li>
+        </ul>
+      </div>
+      
+      <div class="bloco">
+        <h2>Alunos Cadastrados 👨‍🎓</h2>
+        <ul>
+          <li>Lucas Silva da Escola 20 de setembro</li>
+          <li>Ana Oliveira da Escola Aimone Soares Carriconde</li>
+          <li>Felipe Souza da Escola 20 de setembro</li>
+        </ul>
+      </div>
+      
+      <div class="bloco">
+        <h2>Escolas Cadastradas 🏤</h2>
+        <ul>
+          <li>Escola 20 de setembro com 120 alunos</li>
+          <li>Escola Aimone Soares Carriconde com 90 alunos</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+  .decoracao {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(/Imagens/grafismos_verde.png) no-repeat center center;
+    background-size: cover;
+    z-index: 1;
+  }
+ 
+  .botao-whatsapp {
+    background-color: #25D366; 
+    color: white;
+    border: none;
+    padding: 20px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    width: 60px; 
+    height: 60px; 
+  }
+  
+  .botao-whatsapp i {
+    font-size: 30px; 
+  }
+  
+  .botao-whatsapp:hover {
+    background-color: #128C7E;
+  }
+  

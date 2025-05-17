@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mondax + Educação</title>
+  <link rel="stylesheet" href="/style-global.css">
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://kit.fontawesome.com/b7869dd3bf.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="decoracao"></div>
+
+  <div class="card-login">
+    <div class="logo">
+      <img src="/Imagens/Logo.png" alt="Logo do Projeto">
+    </div>
+    <div class="input-wrapper">
+      <input type="text" placeholder="Login" class="input-field" id="login">
+    </div>
+    <div class="input-wrapper">
+      <input type="password" placeholder="Senha" class="input-field" id="senha">
+      <button type="button" id="toggleSenha" class="visualizar-senha">
+        <i class="fa-regular fa-eye"></i>
+      </button>
+    </div>
+    <button class="botao-entrar" onclick="fazerLogin()">
+      Entrar
+    </button>
+  </div>
+
+  <!-- Botão de WhatsApp -->
+  <button class="botao-whatsapp" onclick="abrirWhatsApp()">
+    <i class="fa-brands fa-whatsapp"></i>
+  </button>
+
+  <script>
+    const toggleSenha = document.getElementById('toggleSenha');
+    const senhaInput = document.getElementById('senha');
+
+    toggleSenha.addEventListener('click', () => {
+      const tipo = senhaInput.type === 'password' ? 'text' : 'password';
+      senhaInput.type = tipo;
+      toggleSenha.innerHTML = tipo === 'password' 
+        ? '<i class="fa-regular fa-eye"></i>' 
+        : '<i class="fa-regular fa-eye-slash"></i>';
+    });
+
+    function abrirWhatsApp() {
+      window.open("https://api.whatsapp.com/send?1=pt_BR&phone=555332623030", "_blank");
+    }
+
+    function fazerLogin() {
+      const login = document.getElementById('login').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      const usuarios = {
+        lucilene: { senha: "lucilenesupervisao1", nome: "Lucilene (Supervisão)" },
+        pedro: { senha: "@Snoop123", nome: "Pedro Mondax" }
+      };
+
+      if (usuarios[login] && usuarios[login].senha === senha) {
+        localStorage.setItem("usuarioLogado", usuarios[login].nome);
+        window.location.href = "graficos.html";
+      } else {
+        alert("Login ou senha inválidos!");
+      }
+    }
+  </script>
+</body>
+</html>
