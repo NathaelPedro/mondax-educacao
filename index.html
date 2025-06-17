@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mondax + Educação</title>
-  <link rel="stylesheet" href="style-global.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-global.css" />
+  <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/b7869dd3bf.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -13,13 +13,13 @@
 
   <div class="card-login">
     <div class="logo">
-      <img src="Imagens/Logo.png" alt="Logo do Projeto">
+      <img src="Imagens/Logo.png" alt="Logo do Projeto" />
     </div>
     <div class="input-wrapper">
-      <input type="text" placeholder="Login" class="input-field" id="login">
+      <input type="text" placeholder="Login" class="input-field" id="login" />
     </div>
     <div class="input-wrapper">
-      <input type="password" placeholder="Senha" class="input-field" id="senha">
+      <input type="password" placeholder="Senha" class="input-field" id="senha" />
       <button type="button" id="toggleSenha" class="visualizar-senha">
         <i class="fa-regular fa-eye"></i>
       </button>
@@ -34,46 +34,52 @@
     <i class="fa-brands fa-whatsapp"></i>
   </button>
 
- <script>
-  const toggleSenha = document.getElementById('toggleSenha');
-  const senhaInput = document.getElementById('senha');
+  <script>
+    const toggleSenha = document.getElementById('toggleSenha');
+    const senhaInput = document.getElementById('senha');
 
-  toggleSenha.addEventListener('click', () => {
-    const tipo = senhaInput.type === 'password' ? 'text' : 'password';
-    senhaInput.type = tipo;
-    toggleSenha.innerHTML = tipo === 'password' 
-      ? '<i class="fa-regular fa-eye"></i>' 
-      : '<i class="fa-regular fa-eye-slash"></i>';
-  });
+    toggleSenha.addEventListener('click', () => {
+      const tipo = senhaInput.type === 'password' ? 'text' : 'password';
+      senhaInput.type = tipo;
+      toggleSenha.innerHTML = tipo === 'password' 
+        ? '<i class="fa-regular fa-eye"></i>' 
+        : '<i class="fa-regular fa-eye-slash"></i>';
+    });
 
-  function abrirWhatsApp() {
-    window.open("https://api.whatsapp.com/send?1=pt_BR&phone=555332623030", "_blank");
-  }
-
-  async function fazerLogin() {
-    const login = document.getElementById('login').value.trim();
-    const senha = document.getElementById('senha').value;
-
-    try {
-      // Chamar o backend passando a aba "USUARIOS"
-      const response = await fetch('https://mondax-educacao-backend-d3du.vercel.app/api/dados?sheet=USUARIOS');
-      const usuariosPlanilha = await response.json();
-
-      // Verificar se encontrou o usuário com login e senha corretos
-      const usuarioValido = usuariosPlanilha.find(user => user.LOGIN === login && user.SENHA === senha);
-
-      if (usuarioValido) {
-        // Salvar o nome no localStorage
-        localStorage.setItem("usuarioLogado", usuarioValido.NOME);
-        window.location.href = "graficos.html";
-      } else {
-        alert("Login ou senha inválidos!");
-      }
-    } catch (error) {
-      console.error('Erro ao acessar os dados da planilha:', error);
-      alert("Erro ao acessar os dados. Tente novamente mais tarde.");
+    function abrirWhatsApp() {
+      window.open("https://api.whatsapp.com/send?1=pt_BR&phone=555332623030", "_blank");
     }
-  }
-</script>
+
+    async function fazerLogin() {
+      const login = document.getElementById('login').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      try {
+        const response = await fetch('https://mondax-educacao-backend-d3du.vercel.app/api/dados?sheet=USUARIOS');
+        const usuariosPlanilha = await response.json();
+
+        console.log('Resposta da API:', usuariosPlanilha); // para debug
+
+        if (!usuariosPlanilha.sucesso) {
+          alert("Erro ao carregar dados da planilha.");
+          return;
+        }
+
+        const usuarios = usuariosPlanilha.dados;
+
+        const usuarioValido = usuarios.find(user => user.LOGIN === login && user.SENHA === senha);
+
+        if (usuarioValido) {
+          localStorage.setItem("usuarioLogado", usuarioValido.NOME);
+          window.location.href = "graficos.html";
+        } else {
+          alert("Login ou senha inválidos!");
+        }
+      } catch (error) {
+        console.error('Erro ao acessar os dados da planilha:', error);
+        alert("Erro ao acessar os dados. Tente novamente mais tarde.");
+      }
+    }
+  </script>
 </body>
 </html>
