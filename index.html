@@ -50,18 +50,32 @@
       window.open("https://api.whatsapp.com/send?1=pt_BR&phone=555332623030", "_blank");
     }
 
-    function fazerLogin() {
+    async function carregarUsuarios() {
+      const apiUrl = `https://mondax-educacao-backend-d3du.vercel.app/api/dados?sheet=USUARIOS`;
+      try {
+        const res = await fetch(apiUrl);
+        const json = await res.json();
+        if (!res.ok || !json.sucesso) {
+          console.error('Erro ao buscar usuários:', json.erro);
+          return [];
+        }
+        return json.dados;
+      } catch (e) {
+        console.error('Falha ao buscar usuários', e);
+        return [];
+      }
+    }
+
+    async function fazerLogin() {
       const login = document.getElementById('login').value.trim();
       const senha = document.getElementById('senha').value;
 
-      const usuarios = {
-        lucilene: { senha: "supervisao1", nome: "Lucilene (Supervisão)" },
-        pedro: { senha: "12345", nome: "Pedro Mondax" },
-        fabiano: { senha: "mond@x2025", nome: "Fabiano Souza" }
-      };
+      const usuarios = await carregarUsuarios();
 
-      if (usuarios[login] && usuarios[login].senha === senha) {
-        localStorage.setItem("usuarioLogado", usuarios[login].nome);
+      const usuarioEncontrado = usuarios.find(u => u.LOGIN === login && u.SENHA === senha);
+
+      if (usuarioEncontrado) {
+        localStorage.setItem("usuarioLogado", usuarioEncontrado.NOME);
         window.location.href = "graficos.html";
       } else {
         alert("Login ou senha inválidos!");
