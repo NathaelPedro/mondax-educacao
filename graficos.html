@@ -7,6 +7,42 @@
   <link rel="stylesheet" href="graficos.css">
   <script src="https://kit.fontawesome.com/b7869dd3bf.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="pagina">
+    <header>
+      <div class="logo">
+        <img src="Imagens/Logo.png" alt="Logo do Projeto">
+      </div>
+      <div class="titulo">Mondax + Educação</div>
+      <div class="usuario-box">
+        <div class="usuario-logado" id="usuarioNome">Usuário</div>
+        <button class="botao-sair" onclick="sair()">Sair</button>
+      </div>
+    </header>
+
+    <div class="conteudo">
+      <div class="bloco grafico" style="grid-column: span 3;">
+        <canvas id="grafico"></canvas>
+      </div>
+
+      <div class="bloco">
+        <h3>Ranking de Escolas 🏤</h3>
+        <ul id="ranking-escolas"></ul>
+      </div>
+
+      <div class="bloco">
+        <h3>Alunos Cadastrados 👨‍🎓</h3>
+        <ul id="alunos-cadastrados"></ul>
+      </div>
+
+      <div class="bloco">
+        <h3>Escolas Cadastradas 🏤</h3>
+        <ul id="escolas-cadastradas"></ul>
+      </div>
+    </div>
+  </div>
+
   <script>
     function abrirWhatsApp() {
       window.open("https://api.whatsapp.com/send?1=pt_BR&phone=555332623030", "_blank");
@@ -17,96 +53,92 @@
       window.location.href = "index.html"; 
     }
 
-    window.onload = function () {
-      const nomeUsuario = localStorage.getItem("usuarioLogado") || "Usuário";
-      document.getElementById("usuarioNome").textContent = nomeUsuario;
+    async function carregarPlanilha(sheetName) {
+      const apiUrl = `https://mondax-educacao-backend-d3du.vercel.app/api/dados?sheet=${encodeURIComponent(sheetName)}`;
+      try {
+        const res = await fetch(apiUrl);
+        const json = await res.json();
+        if (!res.ok || !json.sucesso) {
+          console.error('Erro API:', json.erro);
+          return [];
+        }
+        return json.dados;
+      } catch (e) {
+        console.error('Falha ao buscar dados', e);
+        return [];
+      }
+    }
+
+    function atualizarGrafico(dados) {
+      const labels = dados.map(r => r.ESCOLA);
+      const counts = dados.map(r => parseInt(r['N° ALUNO CADASTRADO']) || 0);
 
       var ctx = document.getElementById("grafico").getContext("2d");
-      var grafico = new Chart(ctx, {
+      new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ["Alunos Castrados", "Vieram De Outros Provedores"],
+          labels: labels,
           datasets: [{
-            label: "Alunos",
-            data: [200, 150],
-            backgroundColor: ['#7ed957', '#f39c12'],
-            borderColor: ['#6bd545', '#e67e22'],
+            label: "Alunos por Escola",
+            data: counts,
+            backgroundColor: '#7ed957',
+            borderColor: '#6bd545',
             borderWidth: 1
           }]
         },
         options: {
           responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+          scales: { y: { beginAtZero: true } }
         }
       });
+    }
+
+    function atualizarRanking(dados) {
+      const rankingContainer = document.getElementById('ranking-escolas');
+      rankingContainer.innerHTML = '';
+
+      const ordenado = [...dados].sort((a, b) => (parseInt(b['N° ALUNO CADASTRADO']) || 0) - (parseInt(a['N° ALUNO CADASTRADO']) || 0));
+      ordenado.forEach((escola, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${index + 1}º ${escola.ESCOLA} - ${escola['N° ALUNO CADASTRADO']} alunos cadastrados</span>`;
+        rankingContainer.appendChild(li);
+      });
+    }
+
+    function listarAlunos(dados) {
+      const alunosContainer = document.getElementById('alunos-cadastrados');
+      alunosContainer.innerHTML = '';
+
+      dados.forEach(aluno => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${aluno.NOME} da Escola ${aluno.ESCOLA}</span>`;
+        alunosContainer.appendChild(li);
+      });
+    }
+
+    function listarEscolas(dados) {
+      const escolasContainer = document.getElementById('escolas-cadastradas');
+      escolasContainer.innerHTML = '';
+
+      dados.forEach(escola => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${escola.ESCOLA} com ${escola['N° ALUNO CADASTRADO']} alunos</span>`;
+        escolasContainer.appendChild(li);
+      });
+    }
+
+    window.onload = async function () {
+      const nomeUsuario = localStorage.getItem("usuarioLogado") || "Usuário";
+      document.getElementById("usuarioNome").textContent = nomeUsuario;
+
+      const escolas = await carregarPlanilha('MONDAX EDUCACAO');
+      const alunos = await carregarPlanilha('ALUNOS');
+
+      atualizarGrafico(escolas);
+      atualizarRanking(escolas);
+      listarEscolas(escolas);
+      listarAlunos(alunos);
     };
   </script>
-</head>
-<body>
-  <div class="pagina">
-    <header>
-  <div class="logo">
-    <img src="Imagens/Logo.png" alt="Logo do Projeto">
-  </div>
-  <div class="titulo">Mondax + Educação</div>
-  <div class="usuario-box">
-    <div class="usuario-logado" id="usuarioNome">Usuário</div>
-    <button class="botao-sair" onclick="sair()">Sair</button>
-  </div>
-    </header>
-
-    <div class="conteudo">
-      <div class="bloco grafico" style="grid-column: span 3;">
-        <canvas id="grafico"></canvas>
-      </div>
-      
-      <div class="bloco">
-        <h3>Ranking de Alunos 👨‍🎓</h3>
-        <ul>
-          <li><span>1º Lucas Silva - 10 benefícios</span></li>
-          <li><span>2º Ana Oliveira - 8 benefícios</span></li>
-          <li><span>3º Felipe Souza - 6 benefícios</span></li>
-        </ul>
-      </div>
-      
-      <div class="bloco">
-        <h3>Ranking de Escolas 🏤</h3>
-        <ul>
-          <li><span>1º Escola ABC - 150 alunos cadastrados</span></li>
-          <li><span>2º Escola XYZ - 120 alunos cadastrados</span></li>
-        </ul>
-      </div>
-      
-      <div class="bloco">
-        <h3>Pais Cadastrados 👨‍👦‍👦</h3>
-        <ul>
-          <li><span>João Silva - Filho: Lucas Silva</span></li>
-          <li><span>Maria Oliveira - Filha: Ana Oliveira</span></li>
-          <li><span>Roberto Souza - Filho: Felipe Souza</span></li>
-        </ul>
-      </div>
-      
-      <div class="bloco">
-        <h3>Alunos Cadastrados 👨‍🎓</h3>
-        <ul>
-          <li><span>Lucas Silva da Escola 20 de setembro</span></li>
-          <li><span>Ana Oliveira da Escola Aimone Soares Carriconde</span></li>
-          <li><span>Felipe Souza da Escola 20 de setembro</span></li>
-        </ul>
-      </div>
-      
-      <div class="bloco">
-        <h3>Escolas Cadastradas 🏤</h3>
-        <ul>
-          <li><span>Escola 20 de setembro com 120 alunos</span></li>
-          <li><span>Escola Aimone Soares Carriconde com 90 alunos</span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
